@@ -1,0 +1,61 @@
+body {
+	display: grid;
+	grid-template-columns: 15% 20% 25% 20%;
+	grid-template-rows: 1rf 1rf 1rf 1rf;
+	grid-template-areas:
+		". header header ."
+		"sidebar main main main"
+		"footer footer footer footer";
+	row-gap: 2em;
+	column-gap: 1em;
+}
+
+.header {
+	grid-area: header;
+	display: flex;
+	justify-content: center;
+}
+
+.sidebar {
+	grid-area: sidebar;
+	display: flex;
+	align-items: center;
+}
+
+.nav-item {
+	margin-top: 1em;
+	margin-left: 2em;
+}
+
+.main {
+	grid-area: main;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+select {
+	text-align: center;
+	text-align-last: center;
+	margin-bottom: 2em;
+}
+
+select>option {
+	width: 100px;
+	height: 20px;
+}
+
+.footer {
+	grid-area: footer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+div {
+	/* outline: solid 2px blue; */
+	min-height: 20em;
+}
+
+.games-display {
+	margin-top: 2em;
+}

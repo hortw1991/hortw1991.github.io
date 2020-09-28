@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/terminal.css@0.7.1/dist/terminal.min.css"/>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
+  <title>Sports Bet</title>
+</head>
+<body>
+  <div class="header">
+    <h1>Welcome to Sperts Bets</h1>
+  </div>
+  <div class="sidebar">
+    <ul>
+      <li class="nav-item"><a href="">Link 1</a></li>
+      <li class="nav-item"><a href="">Link 2</a></li>
+      <li class="nav-item"><a href="">Link 3</a></li>
+    </ul>
+  </div>
+  <div class="main">
+    <h4>League/Week Select</h4>
+    <select name="league-select" id="league-select" onchange="displayGames()">
+      <option value="SEC">SEC</option>
+      <option value="ACC">ACC</option>
+    </select>
+    <br>
+    <select name="week-select" id="week-select" onchange="displayGames()">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+      <option value="11">11</option>
+      <option value="12">12</option>
+      <option value="13">13</option>
+      <option value="14">14</option>
+    </select>
+    <div id=games-display>
+
+    </div>
+  </div>
+  <div class="footer">
+    <h4>Where Theo Always Loses</h4>
+  </div>
+</body>
+</html>
