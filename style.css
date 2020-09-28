@@ -1,6 +1,6 @@
 body {
 	display: grid;
-	grid-template-columns: 15% 20% 25% 20%;
+	grid-template-columns: 1rf 1rf 1rf 1rf;
 	grid-template-rows: 1rf 1rf 1rf 1rf;
 	grid-template-areas:
 		". header header ."
@@ -53,7 +53,7 @@ select>option {
 
 div {
 	/* outline: solid 2px blue; */
-	min-height: 20em;
+	min-height: 12em;
 }
 
 .games-display {
