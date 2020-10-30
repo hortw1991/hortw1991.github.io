@@ -379,7 +379,7 @@ function doMouseDown(evt)
         // Decrement the battery ONLY while held by down
         setInterval(() => {
             decrementBat(); 
-        }, 1000);
+        }, 400);
     }
 
 }
