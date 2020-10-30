@@ -1,4 +1,7 @@
 "use strict";
+// -- Part of code base from here: https://threejsfundamentals.org/
+
+import * as THREE from 'https://unpkg.com/three@0.120.0/build/three.module.js';
 
 /**
  * This project uses raycasting to simulate a tank popping balloons as they slowly drop down.  
@@ -19,6 +22,8 @@ let ground;                     // Will becomes the floor.  Needs to be global t
 let gameOver = false;           // Controls the animation timer
 let canPop = false;
 let battery = 100;
+let hardrotate = false;         // difficulty amplifier
+
 
 // Our actual raycaster
 let raycaster = new THREE.Raycaster(  // Raycaster setup
@@ -60,10 +65,10 @@ function createWorld()
     scene.add(new THREE.DirectionalLight(0x808080));
 
     ground = new THREE.Mesh(
-        new THREE.PlaneGeometry(100, 100),
+        new THREE.PlaneGeometry(150, 150),
         new THREE.MeshLambertMaterial({
             color: "white",
-            map: makeTexture("resources/wall-grey.jpg")
+            map: makeTexture("resources/forest_texture.jpg")
         })
     );
     ground.rotation.x = -Math.PI/2;
@@ -71,14 +76,14 @@ function createWorld()
     ground.receiveShadow = true;
     scene.add(ground);
 
-    let gunmat = new THREE.MeshLambertMaterial({
-        color: 0xaaaaff
+    let gunmat = new THREE.MeshPhongMaterial({
+        color: 0x3f704d
     });
     gun = new THREE.Mesh(new THREE.SphereGeometry(1.5,16,8),gunmat);
     let barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.7,5,16), gunmat);
     barrel.position.y = 2.5;
     gun.add(barrel);
-    gunbase = new THREE.Mesh(new THREE.CylinderGeometry(3,3,0.5,32), gunmat);
+    gunbase = new THREE.Mesh(new THREE.CubeGeometry(4,3,4), gunmat);
 
     let linegeom = new THREE.Geometry();
     linegeom.vertices.push(new THREE.Vector3(0,0,0));
@@ -159,7 +164,27 @@ function updateForFrame()
     }
 }
 
-let rot = 0.0;  // Adjust for game difficulty
+
+/**
+ * If the hardmode button is checked, this causes rotation with every ballon 
+ * popped (increasing).
+ */
+let hardRot = 0;
+function toggleHard() 
+{   
+    hardRot = 0;
+    hardmode = true;
+
+    document.getElementById('hardmode').style.background = 'red';
+}
+function toggleEasy()
+{
+    hardmode = false;
+    hardRot = 0;
+    document.getElementById('hardmode').style.background = '';
+
+}
+
 function newhit(obj) {
     if (obj !== hit) {
         // if (hit != null) {
@@ -172,16 +197,18 @@ function newhit(obj) {
                if (obj === objects[i] && obj.isMoving && canPop) {
                    console.log("Hit object number " + i);
                    console.log(obj.isMoving);
-                   obj.canMove = false;
+                   obj.canMove = false;                        
                    
-                   // Make the game more challenging
-                   gunRotateY += rot;
-                   gunbase.rotation.y = gunRotateY;
+                   if (hardmode) {
+                    // Make the game more challenging
+                    gunRotateY += hardRot;
+                    gunbase.rotation.y = gunRotateY;
 
-                   rot += 0.0;  // Adjust for game scaling difficulty
-                   let transformedRayVec = rayVector.clone();
-                   gunbase.localToWorld(transformedRayVec);
-                   raycaster.set(new THREE.Vector3(0,0,0), transformedRayVec);
+                    hardRot += 0.1;  // Adjust for game scaling difficulty
+                    let transformedRayVec = rayVector.clone();
+                    gunbase.localToWorld(transformedRayVec);
+                    raycaster.set(new THREE.Vector3(0,0,0), transformedRayVec);
+                   }
            
                }
            }
@@ -290,10 +317,13 @@ function updateScore()
  */
 function decrementBat()
 {   
-    let bat = document.getElementById('battery');
-    battery--;
-    console.log(battery);
-    bat.innerText = battery.toString();
+    if (battery > 0) 
+    {
+        let bat = document.getElementById('battery');
+        battery--;
+        console.log(battery);
+        bat.innerText = battery.toString();
+    }
 }
 
 /**
@@ -349,7 +379,7 @@ function doMouseDown(evt)
         // Decrement the battery ONLY while held by down
         setInterval(() => {
             decrementBat(); 
-        }, 500);
+        }, 1000);
     }
 
 }
@@ -464,7 +494,7 @@ function doFrame()
     {
         // Pick which overlay depending on winner or loser
         let over;
-        if (objects.length === 0)  // win condition
+        if (objects.length == 0)  // win condition
             over = document.getElementById('gameover-win');
         else
             over = document.getElementById('gameover-loss');
@@ -512,7 +542,7 @@ function createRenderer()
 /**
  * Functions to restart the game after clearing the objects.
  */
-function reload()
+function reset()
 {
     location.reload();
 }
@@ -532,6 +562,14 @@ function init()
     window.addEventListener(    "mousedown",doMouseDown );
     window.addEventListener("mouseup", doMouseUp);
     window.addEventListener(    "mousemove",doMouseMove );
+
+    // Custom Buttons
+    document.getElementById("reset").addEventListener("click", reset, false);
+    document.getElementById("hardmode").addEventListener("click", toggleHard, false);
+    document.getElementById("hardoff").addEventListener("click", toggleEasy, false);
+    // hardmode
+    document.getElementById('hardoff').click();
+
 
     createWorld();
 
