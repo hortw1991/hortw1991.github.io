@@ -464,10 +464,10 @@ function doFrame()
     {
         // Pick which overlay depending on winner or loser
         let over;
-        if (objects.length == 0)  // win condition
+        if (objects.length === 0)  // win condition
             over = document.getElementById('gameover-win');
         else
-            over = document.getElementById('gameover-win');
+            over = document.getElementById('gameover-loss');
         over.style.display = "block";
     }
 
