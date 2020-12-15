@@ -2,46 +2,103 @@
 <html lang="en">
 
 <head>
-<meta charset="UTF-8">
-<title>Balloon Attack Game</title>
-    <link href="css/main.css" rel="stylesheet" type="text/css">
+	<meta charset="UTF-8">
+	<title>Lights Out!</title>
+	<link href="css/main.css" rel="stylesheet" type="text/css">
     <link href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" rel="stylesheet" />
-    <!-- <script src="https://unpkg.com/three@0.120.0/build/three.js"></script> -->
+	<!-- <script src="https://unpkg.com/three@0.120.0/build/three.js"></script> -->
+	
+	<script id="vGlow" type="x-shader/x-fragment">
+		uniform vec3 vVector;
+		uniform float c;
+		uniform float p;
+		varying float intensity;
+		
+		void main()
+		{
+			vec3 vNorm = normalize(normalMatrix * normal);
+			vec3 Norm = normalize(normalMatrix * vVector);
+			intensity = pow( c - dot(vNorm, Norm), p);
+			
+			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+		}
+	</script>
+	<script id="fGlow" type="x-shader/x-fragment">
+		uniform vec3 glowColor;
+		varying float intensity;
+		
+		void main()
+		{
+			vec3 glow = glowColor * intensity;
+			gl_FragColor = vec4( glow, 1.0 );
+		}
+	</script>
+	
 </head>
 
 <body>
-    <div id="scorebox">
-        <button id="reset" style="font-family: monospace">Reset</button>
-        <button id="readme"><a style="color: black; text-decoration: none; font-family: monospace" href="./readme_page.html">Readme</a></button>
-        <button id="hardmode" style="font-family: monospace">Hardmode On</button>
-        <button id="hardoff" style="font-family: monospace">Hardmode Off</button>
+	<div id="scene-container">
+		<script src="app.js" type="module"></script>
+		<div id="start" class="nes-container is-rounded" style="position:fixed; padding:8px; font-family: monospace;
+        margin: 0; z-index:10; min-width: 100%; min-height: 100%;
+        color:white; border: thick solid gold; background-image: url(./resources/cornentrance.jpg); display: hidden; background-size: 100%" >
+			<div id="centered-good">
+				<h2>Enter the corn.</h2>
+				<h3>Collect torches to add daylight and find the exit.<h3>
+				<h3>When the torch glows, start moving.  There is no going back.</h3>
+				<br>
+				<button id="easybtn">Easy</button> - a more comfortable bigger field of view
+				<br><br>
+				<button id="hardbtn">Hard</button> - a closer and disorienting view
+				<br><br>
+				<h3>Controls:</h3>
+				<ul>
+					<li><strong>wasd/Arrow Keys</strong> - move and turn</li>
+					<li><strong>q</strong> - sprint (while staming remains)</li>
+					<li><strong>shift + turn</strong> - sharp turn</li>
+				</ul>
+				<ul> (For Debugging / Demonstrating)
+					<li><strong>=</strong> - top down camera (does not reset)</li>
+					<li><strong>Mouse Click</strong> - logs point of contact between the camera->ground</li>
+					<li><strong>e or t</strong> - time remaining - 25s</li>
+					<li><strong>,</strong> - moves exit to center start area (left of player)</li>
+				</ul>
+			</div>
+        </div>
 
-    </div>
-    <div id="scene-container">
-        <script src="app.js" type="module"></script>
-        <div id="gameover-loss" class="nes-container is-rounded" style="position:fixed; top:5%; padding:8px; font-family: monospace;
+
+		<div id="gameover" class="nes-container is-rounded" style="position:fixed; padding:8px; font-family: monospace;
         margin: 0; z-index:10; min-width: 100%; min-height: 100%;
-        color:white; border: thick solid black; display: none; background: red" >
+        color:white; border: thick solid black; display: none;" >
             <div id="centered">
-                LOSER
+				<span id="endmsg"><p></p></span><br>
+				<span id="score"></span>
+				<br><br><br>
+				<button onclick="window.location.reload();">Play Again?</button>
             </div>
         </div>
-      <div id="gameover-win" class="nes-container is-rounded" style="position:fixed; top:5%; padding:8px; font-family: monospace;
-        margin: 0; z-index:10; min-width: 100%; min-height: 100%;
-        color:white; border: thick solid black; display: none; background-image: linear-gradient(cyan, orange)" >
-            <div id="centered">
-                Winner!!
-            </div>
-        </div>
-        
-        <h3 style="position:fixed; top:5px; left:5px; padding:8px; font-family: monospace;
-           margin: 0; z-index:10; background-image:linear-gradient(cornflowerblue, coral);
-           color:white; border: thick solid black">
-            Remaining: <span id="remaining">0</span><br>
-            Destroyed: <span id="destroyed">0</span><br><br>
-            Battery: <span id="battery">100</span>
-        </h3>
-    </div>
+	</div>
+
+
+	<h3 style="position:fixed; top:5px; left:5px; padding:8px;
+	margin: 0; z-index:10; background-color:#32332A;
+	color:ghostwhite; border: thick solid ghostwhite; font-family:monospace">
+	Escape the corn maze! <br>
+	Time Remaining: <span id="timeLeft">0</span><br>
+	Torches Collected: <span id="collected">0</span>
+	<span><br>
+		<audio id="music" src="./resources/halloween.mp3"></audio>
+		<div>
+			<!-- <button onclick="document.getElementById('music').play()">Play</button> -->
+			<!-- <button onclick="document.getElementById('music').pause()">Pause</button> -->
+			<button onclick="document.getElementById('music').muted=!document.getElementById('music').muted">Mute/ Unmute</button>
+		</div>
+	</h3>
+	<h3 style="position:fixed; top:5px; right:5px; padding:8px;
+	margin: 0; z-index:10; background-color:#32332A;
+	color:ghostwhite; border: thick solid ghostwhite; font-family:monospace">
+		Stamina: <span id=stamina>100</span>
+	</h3>
 
 </body>
 </html>
